@@ -8,5 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class Section {
-    List<LatLng> graphPos;
+    private int something;
+    private List<GraphPos> graphPos;
 }

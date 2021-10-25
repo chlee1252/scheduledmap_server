@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LatLng {
+public class GraphPos {
     private double x;
     private double y;
 }

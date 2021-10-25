@@ -3,8 +3,8 @@ package com.chlee1252.scheduledmap.transport.service;
 import com.chlee1252.scheduledmap.transport.client.odsay.OdsayClient;
 import com.chlee1252.scheduledmap.transport.client.odsay.OdsayPolylineResponseV1;
 import com.chlee1252.scheduledmap.transport.client.odsay.OdsayTransitResponseV1;
+import com.chlee1252.scheduledmap.transport.client.odsay.dto.GraphPos;
 import com.chlee1252.scheduledmap.transport.client.odsay.dto.Path;
-import com.chlee1252.scheduledmap.transport.client.odsay.dto.Section;
 import com.chlee1252.scheduledmap.transport.dto.OdsayParam;
 import com.chlee1252.scheduledmap.transport.dto.OdsayPolylineParam;
 import org.springframework.http.ResponseEntity;
@@ -24,28 +24,26 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
     @Override
     public OdsayTransitResponseV1 getOdsayTotalData(OdsayParam param) throws Exception {
         OdsayTransitResponseV1 transitInfo = getOdsayTransitData(param);
-        setPolylineDataToPath(transitInfo);
+        setPolylineDataToPath(transitInfo, param);
         return transitInfo;
     }
 
-    private void setPolylineDataToPath(OdsayTransitResponseV1 transitInfo) throws Exception {
-        List<Path> paths = transitInfo.getPath();
+    private void setPolylineDataToPath(OdsayTransitResponseV1 transitInfo, OdsayParam param) throws Exception {
+        List<Path> paths = transitInfo.getResult().getPath();
 
         for (Path path : paths) {
-            addPolylineData(path, createPolylineParam(path));
+            addPolylineData(path, createPolylineParam(path, param));
         }
-
-        transitInfo.setPath(paths);
     }
 
     private void addPolylineData(Path path, OdsayPolylineParam param) throws Exception {
-        List<Section> polyline = getOdsayPolylineData(param);
+        List<GraphPos> polyline = getOdsayPolylineData(param);
         path.setPolyline(polyline);
     }
 
-    private OdsayPolylineParam createPolylineParam(Path path) {
+    private OdsayPolylineParam createPolylineParam(Path path, OdsayParam odsayParam) {
         OdsayPolylineParam param = new OdsayPolylineParam();
-        param.setApiKey(param.getApiKey());
+        param.setApiKey(odsayParam.getApiKey());
         param.setMapObject(path.getInfo().getMapObj());
         return param;
     }
@@ -73,12 +71,16 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
     }
 
     @Override
-    public List<Section> getOdsayPolylineData(OdsayPolylineParam param) throws Exception {
+    public List<GraphPos> getOdsayPolylineData(OdsayPolylineParam param) throws Exception {
         ResponseEntity<OdsayPolylineResponseV1> response = odsayClient.getPolyLineData(
                 param.getApiKey(),
-                param.getMapObject()
+                createMapObjectParam(param.getMapObject())
         );
         checkSuccess(response);
-        return response.getBody().getLane().getSection();
+        return response.getBody().getResult().getLane().get(0).getSection().get(0).getGraphPos();
+    }
+
+    private String createMapObjectParam(String mapObject) {
+        return String.format("0:0@%s", mapObject);
     }
 }

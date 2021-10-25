@@ -18,5 +18,5 @@ public class SubPath {
     private String startExitNo;
     private double startExitX;
     private double startExitY;
-    private List<PassStop> passStopList;
+    private PassStop passStopList;
 }

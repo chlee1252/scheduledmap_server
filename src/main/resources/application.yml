@@ -11,3 +11,4 @@ feign:
     config:
       default:
         loggerLevel: FULL
+    decode-slash: false

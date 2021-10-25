@@ -10,5 +10,6 @@ import java.util.List;
 public class Path {
     private long pathType;
     private PathInfo info;
-    private List<Section> polyline;
+    private List<SubPath> subPath;
+    private List<GraphPos> polyline;
 }
