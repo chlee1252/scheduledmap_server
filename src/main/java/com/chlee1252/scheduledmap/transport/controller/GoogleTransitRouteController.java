@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1")
-public class TransitRouteController {
+public class GoogleTransitRouteController {
 
     private final GoogleTransitService googleTransitService;
 
-    public TransitRouteController(GoogleTransitService googleTransitService) {
+    public GoogleTransitRouteController(GoogleTransitService googleTransitService) {
         this.googleTransitService = googleTransitService;
     }
 

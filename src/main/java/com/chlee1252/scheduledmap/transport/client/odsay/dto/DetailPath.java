@@ -7,8 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Path {
-    private long pathType;
-    private PathInfo info;
-    private List<Section> polyline;
+public class DetailPath {
+    private List<Section> section;
 }

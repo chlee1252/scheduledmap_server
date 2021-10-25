@@ -12,6 +12,7 @@ public class PathInfo {
     private long payment;
     private long busTransitCount;
     private long subwayTransitCount;
+    private String mapObj;
     private String firstStartStation;
     private String lastEndStation;
     private long totalDistance;
