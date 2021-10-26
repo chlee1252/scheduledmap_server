@@ -35,6 +35,28 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
         return transitInfo;
     }
 
+    @Override
+    public OdsayTransitResponseV1 getOdsayTransitData(OdsayParam param) throws Exception {
+        ResponseEntity<OdsayTransitResponseV1> response = odsayClient.getTransportPath(
+                param.getApiKey(),
+                param.getOutput(),
+                param.getStartX(),
+                param.getStartY(),
+                param.getEndX(),
+                param.getEndY(),
+                param.getOPT()
+        );
+
+        checkSuccess(response);
+        return response.getBody();
+    }
+
+    @Override
+    public PolylineResponseV1 getOdsayPolylineData(OdsayPolylineParam param) throws Exception {
+        List<GraphPos> graphPos = getPolyline(param);
+        return PolylineResponseV1.of(graphPos);
+    }
+
     private void setPolylineDataToPath(OdsayTransitResponseV1 transitInfo, OdsayParam param) throws Exception {
         List<Path> paths = transitInfo.getResult().getPath();
 
@@ -55,22 +77,6 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
         return param;
     }
 
-    @Override
-    public OdsayTransitResponseV1 getOdsayTransitData(OdsayParam param) throws Exception {
-        ResponseEntity<OdsayTransitResponseV1> response = odsayClient.getTransportPath(
-                param.getApiKey(),
-                param.getOutput(),
-                param.getStartX(),
-                param.getStartY(),
-                param.getEndX(),
-                param.getEndY(),
-                param.getOPT()
-        );
-
-        checkSuccess(response);
-        return response.getBody();
-    }
-
     private void checkSuccess(ResponseEntity response) throws Exception {
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new Exception("Odsay 정보 가져오기 실패!");
@@ -84,12 +90,6 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
         );
         checkSuccess(response);
         return Objects.requireNonNull(response.getBody()).getResult().getLane().get(0).getSection().get(0).getGraphPos();
-    }
-
-    @Override
-    public PolylineResponseV1 getOdsayPolylineData(OdsayPolylineParam param) throws Exception {
-        List<GraphPos> graphPos = getPolyline(param);
-        return PolylineResponseV1.of(graphPos);
     }
 
     private String createMapObjectParam(String mapObject) {
