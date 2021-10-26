@@ -7,6 +7,7 @@ import com.chlee1252.scheduledmap.transport.client.odsay.dto.GraphPos;
 import com.chlee1252.scheduledmap.transport.client.odsay.dto.Path;
 import com.chlee1252.scheduledmap.transport.dto.OdsayParam;
 import com.chlee1252.scheduledmap.transport.dto.OdsayPolylineParam;
+import com.chlee1252.scheduledmap.transport.dto.PolylineResponseV1;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
     }
 
     private void addPolylineData(Path path, OdsayPolylineParam param) throws Exception {
-        List<GraphPos> polyline = getOdsayPolylineData(param);
+        List<GraphPos> polyline = getPolyline(param);
         path.setPolyline(polyline);
     }
 
@@ -76,14 +77,19 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
         }
     }
 
-    @Override
-    public List<GraphPos> getOdsayPolylineData(OdsayPolylineParam param) throws Exception {
+    private List<GraphPos> getPolyline(OdsayPolylineParam param) throws Exception {
         ResponseEntity<OdsayPolylineResponseV1> response = odsayClient.getPolyLineData(
                 param.getApiKey(),
                 createMapObjectParam(param.getMapObject())
         );
         checkSuccess(response);
         return Objects.requireNonNull(response.getBody()).getResult().getLane().get(0).getSection().get(0).getGraphPos();
+    }
+
+    @Override
+    public PolylineResponseV1 getOdsayPolylineData(OdsayPolylineParam param) throws Exception {
+        List<GraphPos> graphPos = getPolyline(param);
+        return PolylineResponseV1.of(graphPos);
     }
 
     private String createMapObjectParam(String mapObject) {

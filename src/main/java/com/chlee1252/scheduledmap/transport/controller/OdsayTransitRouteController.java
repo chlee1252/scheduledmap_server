@@ -2,6 +2,8 @@ package com.chlee1252.scheduledmap.transport.controller;
 
 import com.chlee1252.scheduledmap.transport.client.odsay.OdsayTransitResponseV1;
 import com.chlee1252.scheduledmap.transport.dto.OdsayParam;
+import com.chlee1252.scheduledmap.transport.dto.OdsayPolylineParam;
+import com.chlee1252.scheduledmap.transport.dto.PolylineResponseV1;
 import com.chlee1252.scheduledmap.transport.service.OdsayTransitService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +33,7 @@ public class OdsayTransitRouteController {
         return odsayTransitService.getOdsayTotalData(createOdsayParam(apiKey, output, startX, startY, endX, endY, opt));
     }
 
-    @GetMapping("odsay/transit/only")
+    @GetMapping("/odsay/transit/only")
     public OdsayTransitResponseV1 getTransitData(@RequestParam("apiKey") String apiKey,
                                                  @RequestParam("output") String output,
                                                  @RequestParam("SX") String startX,
@@ -41,6 +43,16 @@ public class OdsayTransitRouteController {
                                                  @RequestParam("OPT") String opt
     ) throws Exception {
         return odsayTransitService.getOdsayTransitData(createOdsayParam(apiKey, output, startX, startY, endX, endY, opt));
+    }
+
+    @GetMapping("/odsay/polyline")
+    public PolylineResponseV1 getPolyline(@RequestParam("apiKey") String apiKey,
+                                          @RequestParam("mapObject") String mapObject) throws Exception {
+        OdsayPolylineParam param = new OdsayPolylineParam();
+        param.setApiKey(apiKey);
+        param.setMapObject(mapObject);
+
+        return odsayTransitService.getOdsayPolylineData(param);
     }
 
     private OdsayParam createOdsayParam(String apiKey, String output, String startX, String startY, String endX, String endY, String opt) {
