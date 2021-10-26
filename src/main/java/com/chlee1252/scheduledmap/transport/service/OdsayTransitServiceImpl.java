@@ -24,6 +24,11 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
     @Override
     public OdsayTransitResponseV1 getOdsayTotalData(OdsayParam param) throws Exception {
         OdsayTransitResponseV1 transitInfo = getOdsayTransitData(param);
+
+        if (!transitInfo.getError().isEmpty()) {
+            return transitInfo;
+        }
+        
         setPolylineDataToPath(transitInfo, param);
         return transitInfo;
     }
