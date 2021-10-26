@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class OdsayTransitServiceImpl implements OdsayTransitService {
@@ -28,7 +29,7 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
         if (!transitInfo.getError().isEmpty()) {
             return transitInfo;
         }
-        
+
         setPolylineDataToPath(transitInfo, param);
         return transitInfo;
     }
@@ -82,7 +83,7 @@ public class OdsayTransitServiceImpl implements OdsayTransitService {
                 createMapObjectParam(param.getMapObject())
         );
         checkSuccess(response);
-        return response.getBody().getResult().getLane().get(0).getSection().get(0).getGraphPos();
+        return Objects.requireNonNull(response.getBody()).getResult().getLane().get(0).getSection().get(0).getGraphPos();
     }
 
     private String createMapObjectParam(String mapObject) {
